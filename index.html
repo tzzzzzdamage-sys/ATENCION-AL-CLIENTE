@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quizzes Interactivos · Atención al Cliente · Licencia Tipo E</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.page-header {
+  background: linear-gradient(135deg, #0b1f3a 0%, #1e3a6e 55%, #0d3060 100%);
+  padding: 48px 24px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(37,99,235,.3) 0%, transparent 50%),
+    radial-gradient(circle at 85% 20%, rgba(234,88,12,.2) 0%, transparent 45%);
+}
+.page-header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 40px;
+  background: #f1f5f9;
+  clip-path: ellipse(56% 100% at 50% 100%);
+}
+.header-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+.header-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(234,88,12,.18); border: 1px solid rgba(234,88,12,.45);
+  color: #fb923c; padding: 6px 16px; border-radius: 100px;
+  font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.badge-dot {
+  width: 6px; height: 6px; background: #fb923c; border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.page-header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(44px, 8vw, 72px);
+  color: #fff; letter-spacing: 1px; line-height: 1;
+  margin-bottom: 16px;
+}
+.page-header h1 em { color: #f59e0b; font-style: normal; }
+.page-header p {
+  font-size: 16px; color: rgba(255,255,255,.65);
+  line-height: 1.75; max-width: 520px; margin: 0 auto;
+}
+.header-stats {
+  display: flex; justify-content: center; gap: 32px; margin-top: 28px; flex-wrap: wrap;
+}
+.hstat strong {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: #f59e0b; line-height: 1;
+}
+.hstat span { font-size: 11px; color: rgba(255,255,255,.5); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── WRAPPER ── */
+.wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 60px; }
+
+/* ── PROGRESS STRIP ── */
+.progress-strip {
+  background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 24px rgba(0,0,0,.07);
+  padding: 20px 28px; margin-bottom: 36px;
+  display: flex; align-items: center; gap: 20px;
+}
+.ps-icon { font-size: 28px; }
+.ps-info { flex: 1; }
+.ps-info h3 { font-size: 15px; font-weight: 800; color: #0b1f3a; margin-bottom: 6px; }
+.ps-info p { font-size: 13px; color: #94a3b8; font-weight: 600; }
+.ps-bar-wrap { height: 8px; background: #e2e8f0; border-radius: 100px; overflow: hidden; margin-top: 8px; }
+.ps-bar { height: 100%; border-radius: 100px; background: linear-gradient(90deg,#2563eb,#0d9488); transition: width .6s ease; }
+.ps-pct {
+  font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #2563eb; line-height: 1; flex-shrink: 0;
+}
+
+/* ── SECTION TITLE ── */
+.sec-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #ea580c; font-weight: 800; margin-bottom: 6px; display: block; }
+.sec-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4vw, 42px); color: #0b1f3a; line-height: 1.1; letter-spacing: .5px; margin-bottom: 8px; }
+.sec-title em { color: #2563eb; font-style: normal; }
+.sec-sub { font-size: 15px; color: #475569; line-height: 1.7; max-width: 600px; margin-bottom: 28px; }
+
+/* ── QUIZ CARDS GRID ── */
+.quiz-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 44px;
+}
+.qcard {
+  background: #fff; border-radius: 18px; border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0,0,0,.07);
+  overflow: hidden; cursor: pointer;
+  transition: transform .22s ease, box-shadow .22s ease;
+  position: relative;
+}
+.qcard:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.14); }
+.qcard.done { border-color: #86efac; }
+.qcard.done::after {
+  content: '✓';
+  position: absolute; top: 12px; right: 12px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #16a34a; color: #fff;
+  font-size: 13px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.qcard-accent { height: 5px; }
+.qcard-top { padding: 22px 22px 14px; }
+.qcard-icon { font-size: 36px; margin-bottom: 10px; }
+.qcard-top h3 { font-size: 15px; font-weight: 800; color: #0b1f3a; margin-bottom: 6px; }
+.qcard-top p { font-size: 13px; color: #475569; line-height: 1.55; }
+.qcard-footer {
+  padding: 14px 22px; border-top: 1px solid #e2e8f0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.qbadge { padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 800; }
+.btn-sm {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+  transition: filter .15s, transform .15s;
+}
+.btn-sm:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* ── QUIZ PLAYER ── */
+.quiz-player {
+  background: #fff; border-radius: 20px; border: 2px solid #f59e0b;
+  box-shadow: 0 8px 40px rgba(245,158,11,.12);
+  overflow: hidden;
+}
+.qp-header {
+  background: linear-gradient(135deg, #0b1f3a, #1e3a6e);
+  padding: 24px 32px;
+  display: flex; align-items: center; gap: 16px;
+}
+.qp-header-icon { font-size: 32px; }
+.qp-header h2 {
+  font-family: 'Bebas Neue', sans-serif; font-size: 26px;
+  color: #fff; letter-spacing: .5px; line-height: 1;
+}
+.qp-header p { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 600; margin-top: 3px; }
+.qp-meta {
+  padding: 16px 32px; background: #fffbeb;
+  border-bottom: 1px solid #fde68a;
+  display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+}
+.qp-meta-item { font-size: 13px; color: #92400e; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+.quiz-nav {
+  display: flex; gap: 8px; flex-wrap: wrap; padding: 20px 32px 0;
+}
+.qnav-btn {
+  width: 36px; height: 36px; border-radius: 10px; border: 2px solid #e2e8f0;
+  background: #fff; color: #475569; font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 800; cursor: pointer;
+  transition: all .18s; display: flex; align-items: center; justify-content: center;
+}
+.qnav-btn:hover { border-color: #2563eb; color: #2563eb; }
+.qnav-btn.current { background: #2563eb; border-color: #2563eb; color: #fff; }
+.qnav-btn.answered-correct { background: #16a34a; border-color: #16a34a; color: #fff; }
+.qnav-btn.answered-wrong { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+.qp-body { padding: 28px 32px; }
+
+.question-box {
+  background: #dbeafe; border-radius: 14px; padding: 22px 24px; margin-bottom: 22px;
+}
+.question-num {
+  font-size: 11px; font-weight: 800; color: #2563eb; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 8px; display: block;
+}
+.question-box p { font-size: 15px; color: #0b1f3a; line-height: 1.75; font-weight: 600; }
+
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.opt {
+  background: #fff; border: 2px solid #e2e8f0; border-radius: 12px;
+  padding: 15px 20px; display: flex; align-items: flex-start; gap: 14px;
+  cursor: pointer; transition: all .18s; font-size: 14px; color: #0f172a; line-height: 1.5;
+  text-align: left; width: 100%; font-family: 'Nunito', sans-serif; font-weight: 600;
+}
+.opt:hover:not(:disabled) { border-color: #2563eb; background: #eff6ff; }
+.opt:disabled { cursor: default; }
+.opt.correct { border-color: #16a34a !important; background: #dcfce7 !important; color: #166534 !important; }
+.opt.wrong   { border-color: #dc2626 !important; background: #fef2f2 !important; color: #b91c1c !important; }
+.opt-letter {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  background: #dbeafe; color: #2563eb;
+  font-weight: 900; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .18s, color .18s;
+}
+.opt.correct .opt-letter { background: #16a34a; color: #fff; }
+.opt.wrong   .opt-letter { background: #dc2626; color: #fff; }
+
+.feedback {
+  border-radius: 12px; padding: 16px 20px; font-size: 14px; line-height: 1.65;
+  display: none; margin-bottom: 16px; font-weight: 600;
+}
+.feedback.show { display: block; }
+.feedback.fb-correct { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+.feedback.fb-wrong   { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+
+.qp-actions {
+  display: flex; gap: 10px; flex-wrap: wrap; padding: 0 32px 28px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+  transition: filter .15s, transform .15s;
+}
+.btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-primary { background: #2563eb; color: #fff; }
+.btn-amber   { background: #f59e0b; color: #fff; }
+.btn-outline {
+  background: transparent; border: 2px solid #e2e8f0;
+  color: #475569;
+}
+.btn-outline:hover { border-color: #475569; filter: none; transform: none; }
+
+/* ── RESULTS PANEL ── */
+.results-panel {
+  display: none;
+  text-align: center; padding: 40px 32px;
+  border-top: 1px solid #e2e8f0;
+}
+.results-panel.show { display: block; }
+.result-score {
+  font-family: 'Bebas Neue', sans-serif; font-size: 80px; line-height: 1;
+  margin-bottom: 4px;
+}
+.result-label { font-size: 15px; color: #475569; font-weight: 700; margin-bottom: 24px; }
+.result-medals { display: flex; justify-content: center; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+.medal-box { text-align: center; }
+.medal-box strong {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif; font-size: 36px; line-height: 1;
+}
+.medal-box span { font-size: 12px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.result-msg { font-size: 15px; line-height: 1.75; color: #475569; max-width: 420px; margin: 0 auto 28px; }
+
+/* ── QUIZ SELECTOR MODAL FEEL ── */
+.selector-info {
+  background: linear-gradient(135deg, #fff7ed, #fffbeb);
+  border: 2px solid #f59e0b; border-radius: 16px;
+  padding: 28px 32px; margin-bottom: 36px;
+  display: flex; gap: 20px; align-items: center;
+}
+.sel-icon { font-size: 52px; flex-shrink: 0; }
+.sel-text h2 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: #0b1f3a; margin-bottom: 6px; }
+.sel-text p { font-size: 14px; color: #475569; line-height: 1.65; }
+
+/* ── NOTIFICATION ── */
+#notif {
+  position: fixed; bottom: 24px; right: 24px;
+  background: #0b1f3a; color: #fff;
+  padding: 14px 22px; border-radius: 14px;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 8px 32px rgba(0,0,0,.25);
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  z-index: 9999; max-width: 340px; pointer-events: none;
+}
+#notif.show { transform: translateY(0); opacity: 1; }
+
+/* ── ANIMATIONS ── */
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.5)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.fade-up { animation: fadeUp .35s ease forwards; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 760px) {
+  .quiz-grid { grid-template-columns: repeat(2, 1fr); }
+  .qp-body, .qp-actions, .qp-meta, .quiz-nav { padding-left: 20px; padding-right: 20px; }
+  .qp-header { padding: 20px; }
+  .header-stats { gap: 20px; }
+}
+@media (max-width: 500px) {
+  .quiz-grid { grid-template-columns: 1fr; }
+  .selector-info { flex-direction: column; text-align: center; }
+  .results-panel { padding: 28px 16px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="page-header">
+  <div class="header-inner">
+    <div class="header-badge"><span class="badge-dot"></span> Licencia Tipo E · Regular</div>
+    <h1>Quizzes <em>Interactivos</em></h1>
+    <p>6 quizzes temáticos para verificar tu aprendizaje en Atención al Cliente. Retroalimentación inmediata en cada respuesta.</p>
+    <div class="header-stats">
+      <div class="hstat"><strong>6</strong><span>Quizzes</span></div>
+      <div class="hstat"><strong>50</strong><span>Preguntas</span></div>
+      <div class="hstat"><strong>10</strong><span>Lecciones</span></div>
+      <div class="hstat"><strong>20%</strong><span>Calificación</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="wrap">
+
+  <!-- PROGRESS -->
+  <div class="progress-strip">
+    <div class="ps-icon">📊</div>
+    <div class="ps-info">
+      <h3>Tu progreso en los quizzes</h3>
+      <p id="progressLabel">0 de 6 quizzes completados</p>
+      <div class="ps-bar-wrap"><div class="ps-bar" id="progressBar" style="width:0%"></div></div>
+    </div>
+    <div class="ps-pct" id="progressPct">0%</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="selector-info">
+    <div class="sel-icon">⚡</div>
+    <div class="sel-text">
+      <h2>Quizzes Interactivos</h2>
+      <p>Un quiz por lección temática para reforzar y verificar tu aprendizaje. Son cortos, inmediatos y te dan retroalimentación instantánea. ¡Prepárate bien para el examen final!</p>
+    </div>
+  </div>
+
+  <!-- SECTION TITLE -->
+  <span class="sec-tag">⚡ Evaluaciones Rápidas</span>
+  <h2 class="sec-title">Selecciona un <em>Quiz</em></h2>
+  <p class="sec-sub">Haz clic en cualquier quiz para iniciarlo. Puedes completarlos en cualquier orden. Cada quiz tiene entre 8 y 10 preguntas de opción múltiple.</p>
+
+  <!-- QUIZ CARDS -->
+  <div class="quiz-grid" id="quizGrid">
+
+    <div class="qcard" id="qcard-1" onclick="startQuiz(1)">
+      <div class="qcard-accent" style="background:linear-gradient(90deg,#2563eb,#3b82f6);"></div>
+      <div class="qcard-top">
+        <div class="qcard-icon">🧑‍💼</div>
+        <h3>Quiz 1 · El Cliente</h3>
+        <p>Tipos de clientes, importancia del cliente, actitudes y relación conductor-cliente.</p>
+      </div>
+      <div class="qcard-footer">
+        <span class="qbadge" style="background:#dbeafe;color:#1d4ed8;">8 preguntas</span>
+        <button class="btn-sm" style="background:#2563eb;color:#fff;" onclick="event.stopPropagation();startQuiz(1)">Iniciar ⚡</button>
+      </div>
+    </div>
+
+    <div class="qcard" id="qcard-2" onclick="startQuiz(2)">
+      <div class="qcard-accent" style="background:linear-gradient(90deg,#ea580c,#f97316);"></div>
+      <div class="qcard-top">
+        <div class="qcard-icon">🌟</div>
+        <h3>Quiz 2 · Servicio al Cliente</h3>
+        <p>Concepto de servicio, elementos, atención vs. servicio y relación empresa-cliente.</p>
+      </div>
+      <div class="qcard-footer">
+        <span class="qbadge" style="background:#fff7ed;color:#c2410c;">8 preguntas</span>
+        <button class="btn-sm" style="background:#ea580c;color:#fff;" onclick="event.stopPropagation();startQuiz(2)">Iniciar ⚡</button>
+      </div>
+    </div>
+
+    <div class="qcard" id="qcard-3" onclick="startQuiz(3)">
+      <div class="qcard-accent" style="background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+      <div class="qcard-top">
+        <div class="qcard-icon">🏆</div>
+        <h3>Quiz 3 · Calidad y Buenas Prácticas</h3>
+        <p>Estándares de calidad, mejora continua, indicadores y manejo de incidencias.</p>
+      </div>
+      <div class="qcard-footer">
+        <span class="qbadge" style="background:#fef9c3;color:#854d0e;">10 preguntas</span>
+        <button class="btn-sm" style="background:#f59e0b;color:#fff;" onclick="event.stopPropagation();startQuiz(3)">Iniciar ⚡</button>
+      </div>
+    </div>
+
+    <div class="qcard" id="qcard-4" onclick="startQuiz(4)">
+      <div class="qcard-accent" style="background:linear-gradient(90deg,#7c3aed,#a855f7);"></div>
+      <div class="qcard-top">
+        <div class="qcard-icon">🪪</div>
+        <h3>Quiz 4 · Imagen y Prestaciones</h3>
+        <p>Actitudes del conductor, imagen de marca, comportamiento y roles en el servicio.</p>
+      </div>
+      <div class="qcard-footer">
+        <span class="qbadge" style="background:#ede9fe;color:#6d28d9;">8 preguntas</span>
+        <button class="btn-sm" style="background:#7c3aed;color:#fff;" onclick="event.stopPropagation();startQuiz(4)">Iniciar ⚡</button>
+      </div>
+    </div>
+
+    <div class="qcard" id="qcard-5" onclick="startQuiz(5)">
+      <div class="qcard-accent" style="background:linear-gradient(90deg,#16a34a,#22c55e);"></div>
+      <div class="qcard-top">
+        <div class="qcard-icon">🗺️</div>
+        <h3>Quiz 5 · Circulación Urbana</h3>
+        <p>Acceso urbano, zonas de carga/descarga, regulaciones de peso, tamaño y horarios.</p>
+      </div>
+      <div class="qcard-footer">
+        <span class="qbadge" style="background:#dcfce7;color:#15803d;">8 preguntas</span>
+        <button class="btn-sm" style="background:#16a34a;color:#fff;" onclick="event.stopPropagation();startQuiz(5)">Iniciar ⚡</button>
+      </div>
+    </div>
+
+    <div class="qcard" id="qcard-6" onclick="startQuiz(6)">
+      <div class="qcard-accent" style="background:linear-gradient(90deg,#dc2626,#ef4444);"></div>
+      <div class="qcard-top">
+        <div class="qcard-icon">💬</div>
+        <h3>Quiz 6 · Comunicación y Éxito</h3>
+        <p>Comunicación interpersonal, barreras, factores de éxito y calidad empresarial.</p>
+      </div>
+      <div class="qcard-footer">
+        <span class="qbadge" style="background:#fef2f2;color:#b91c1c;">8 preguntas</span>
+        <button class="btn-sm" style="background:#dc2626;color:#fff;" onclick="event.stopPropagation();startQuiz(6)">Iniciar ⚡</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── QUIZ PLAYER ── -->
+  <div class="quiz-player" id="quizPlayer" style="display:none;">
+
+    <div class="qp-header">
+      <div class="qp-header-icon" id="playerIcon">⚡</div>
+      <div>
+        <h2 id="playerTitle">Quiz</h2>
+        <p id="playerSubtitle">Atención al Cliente · Licencia Tipo E</p>
+      </div>
+    </div>
+
+    <div class="qp-meta">
+      <div class="qp-meta-item">⏱️ Sin límite de tiempo</div>
+      <div class="qp-meta-item">📋 <span id="metaTotal">8</span> preguntas</div>
+      <div class="qp-meta-item">✅ Retroalimentación inmediata</div>
+      <div class="qp-meta-item">🔄 Puedes reintentar</div>
+    </div>
+
+    <!-- Question navigation dots -->
+    <div class="quiz-nav" id="quizNav"></div>
+
+    <div class="qp-body">
+      <div class="question-box">
+        <span class="question-num" id="questionNum">Pregunta 1 de 8</span>
+        <p id="questionText"></p>
+      </div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="feedback" id="feedbackBox"></div>
+    </div>
+
+    <div class="qp-actions">
+      <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()" style="display:none;">Siguiente pregunta ➡️</button>
+      <button class="btn btn-outline" onclick="resetCurrentQuestion()">🔄 Reiniciar pregunta</button>
+      <button class="btn btn-outline" onclick="closeQuiz()">← Volver a quizzes</button>
+    </div>
+
+    <!-- Results -->
+    <div class="results-panel" id="resultsPanel">
+      <div class="result-score" id="resultScore" style="color:#2563eb;">0/8</div>
+      <div class="result-label" id="resultLabel">Resultados del quiz</div>
+      <div class="result-medals" id="resultMedals"></div>
+      <p class="result-msg" id="resultMsg"></p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-amber" onclick="retryQuiz()">🔄 Repetir quiz</button>
+        <button class="btn btn-primary" onclick="closeQuiz()">← Ver todos los quizzes</button>
+      </div>
+    </div>
+
+  </div><!-- /quiz-player -->
+
+</main>
+
+<!-- NOTIFICATION -->
+<div id="notif"></div>
+
+<!-- ════════════════════════════════════
+     BANCO DE PREGUNTAS COMPLETO
+════════════════════════════════════ -->
+<script>
+const QUIZZES = {
+  1: {
+    title: 'Quiz 1 · El Cliente',
+    icon: '🧑‍💼',
+    color: '#2563eb',
+    questions: [
+      {
+        q: '¿Cuál de las siguientes opciones define mejor el concepto de "cliente" en el contexto del transporte de mercancías?',
+        opts: [
+          'La persona que fabrica los productos que se transportan.',
+          'Cualquier persona o empresa que requiere un servicio de transporte y por el cual paga.',
+          'El conductor que entrega la mercancía en el punto de destino.',
+          'El empleado de la empresa de transporte que coordina las rutas.'
+        ],
+        correct: 1,
+        fb: 'El cliente es quien requiere y paga por el servicio. En transporte de mercancías, puede ser una empresa, un distribuidor o un particular que necesita mover sus bienes de un punto a otro.'
+      },
+      {
+        q: '¿Qué tipo de cliente es aquel que ya ha contratado los servicios de la empresa anteriormente y vuelve a hacerlo?',
+        opts: ['Cliente potencial', 'Cliente eventual', 'Cliente fidelizado o recurrente', 'Cliente corporativo'],
+        correct: 2,
+        fb: 'El cliente fidelizado o recurrente es aquel que ha tenido una experiencia satisfactoria previa y decide continuar usando el mismo servicio. Es el más valioso para una empresa, pues genera ingresos estables y tiende a recomendar el servicio.'
+      },
+      {
+        q: 'Un conductor profesional debe entender que la imagen que proyecta es, ante todo, la imagen de:',
+        opts: [
+          'Él mismo como individuo.',
+          'La empresa para la que trabaja y el sector del transporte.',
+          'Solo la empresa contratante, no del sector.',
+          'El sindicato al que pertenece.'
+        ],
+        correct: 1,
+        fb: 'Cada conductor es un embajador de la empresa y del sector. Su comportamiento, apariencia y trato afectan directamente cómo los clientes perciben a la organización y al transporte profesional en general.'
+      },
+      {
+        q: '¿Cuál es la actitud correcta frente a un cliente que hace una queja o reclamo?',
+        opts: [
+          'Defenderse explicando que el error no fue propio.',
+          'Escuchar con atención, mostrar empatía y gestionar la situación con profesionalismo.',
+          'Derivar inmediatamente la queja a la empresa sin decir nada.',
+          'Pedirle al cliente que ponga el reclamo por escrito antes de atenderlo.'
+        ],
+        correct: 1,
+        fb: 'La actitud profesional ante un reclamo es escuchar activamente, mostrar comprensión y buscar una solución. Defenderse o ignorar al cliente empeora la situación y deteriora la relación comercial.'
+      },
+      {
+        q: '¿Por qué es importante conocer las necesidades del cliente antes de realizar el servicio?',
+        opts: [
+          'Para cobrar más si el servicio es complejo.',
+          'Para adaptar el servicio a sus expectativas y garantizar su satisfacción.',
+          'Porque la ley lo exige en todos los contratos de transporte.',
+          'Para evitar tener que hablar con el cliente durante la entrega.'
+        ],
+        correct: 1,
+        fb: 'Conocer las necesidades del cliente permite personalizar el servicio, anticipar posibles problemas y superar sus expectativas. Esto genera confianza y fidelización a largo plazo.'
+      },
+      {
+        q: 'El término "cliente interno" en una empresa de transporte hace referencia a:',
+        opts: [
+          'El cliente que paga con transferencia bancaria.',
+          'Los empleados y compañeros que dependen del trabajo de otros dentro de la misma organización.',
+          'Los clientes que viven en la misma ciudad de la empresa.',
+          'Los proveedores de combustible y mantenimiento.'
+        ],
+        correct: 1,
+        fb: 'El cliente interno es cualquier persona dentro de la organización que recibe el resultado del trabajo de otro compañero. Tratar bien a los compañeros de trabajo mejora la calidad general del servicio externo.'
+      },
+      {
+        q: '¿Qué comportamiento del conductor puede generar una percepción negativa en el cliente, incluso si la mercancía llega en perfectas condiciones?',
+        opts: [
+          'Llegar cinco minutos antes del horario pactado.',
+          'Usar uniforme limpio y correcto.',
+          'Llegar con actitud arrogante, sin saludar y hablando por teléfono.',
+          'Verificar la documentación antes de entregar.'
+        ],
+        correct: 2,
+        fb: 'La actitud y el trato son parte fundamental del servicio. Un conductor descortés, distraído o maleducado arruina la experiencia del cliente aunque la mercancía esté perfecta. El "cómo" se entrega importa tanto como el "qué" se entrega.'
+      },
+      {
+        q: '¿Cuál es la principal razón por la que las empresas de transporte invierten en capacitar a sus conductores en atención al cliente?',
+        opts: [
+          'Para cumplir con un requisito administrativo del sindicato.',
+          'Porque la capacitación es obligatoria por ley para obtener la licencia tipo E.',
+          'Porque un conductor bien formado genera confianza, fideliza clientes y mejora la reputación de la empresa.',
+          'Para reducir los costos de combustible mediante una mejor conducción.'
+        ],
+        correct: 2,
+        fb: 'La capacitación en atención al cliente tiene un impacto directo en la satisfacción, fidelización y recomendación. Un conductor que trata bien a los clientes es un activo estratégico para la empresa.'
+      }
+    ]
+  },
+
+  2: {
+    title: 'Quiz 2 · Servicio al Cliente',
+    icon: '🌟',
+    color: '#ea580c',
+    questions: [
+      {
+        q: 'Un conductor de transporte de mercancías llega puntualmente a entregar un pedido, pero nota que el cliente está molesto por un retraso de la semana anterior (que no fue culpa del conductor). ¿Cuál es la actitud correcta que debe adoptar?',
+        opts: [
+          'Explicar inmediatamente que el retraso anterior no fue su culpa y continuar con la entrega.',
+          'Ignorar el comentario del cliente y entregar la mercancía sin interactuar.',
+          'Escuchar al cliente con respeto, reconocer su molestia, ofrecer disculpas en nombre del servicio y atender la entrega con profesionalismo.',
+          'Decirle al cliente que hable con la empresa y retirarse sin completar la entrega.'
+        ],
+        correct: 2,
+        fb: '✅ La respuesta C es la actitud profesional correcta. Escuchar activamente, reconocer la molestia del cliente y ofrecer disculpas en nombre del servicio — sin perder la compostura — refleja la calidad de la imagen del conductor y de la empresa.'
+      },
+      {
+        q: '¿Cuál es la diferencia principal entre "atención al cliente" y "servicio al cliente"?',
+        opts: [
+          'No existe diferencia; son términos equivalentes.',
+          'La atención es el trato humano y la actitud del personal; el servicio incluye también los procesos, tiempos y condiciones del servicio prestado.',
+          'El servicio es solo la entrega física; la atención incluye el cobro.',
+          'La atención es responsabilidad del conductor y el servicio de la oficina.'
+        ],
+        correct: 1,
+        fb: 'La atención al cliente se refiere al componente humano: cómo se trata, escucha y comunica con el cliente. El servicio al cliente es más amplio e incluye tiempos, procesos, condiciones y resultados. Ambos deben funcionar bien para lograr la satisfacción.'
+      },
+      {
+        q: 'En el transporte de mercancías, ¿qué elemento del servicio genera mayor impacto en la satisfacción del cliente?',
+        opts: [
+          'El precio más bajo del mercado.',
+          'La cumplimiento de tiempos de entrega acordados y la condición de la mercancía.',
+          'El tipo de vehículo utilizado para el transporte.',
+          'El tamaño de la empresa de transporte.'
+        ],
+        correct: 1,
+        fb: 'La puntualidad y el estado de la mercancía son los dos factores más críticos para el cliente en el transporte de carga. Son los compromisos básicos del servicio y su incumplimiento genera insatisfacción inmediata.'
+      },
+      {
+        q: '¿Qué significa ofrecer un servicio "personalizado" en el contexto del transporte profesional?',
+        opts: [
+          'Llamar al cliente por su nombre en cada interacción.',
+          'Adaptar el trato, la comunicación y el proceso de entrega a las necesidades específicas de cada cliente.',
+          'Entregar la mercancía en horario nocturno a pedido del cliente.',
+          'Usar un uniforme personalizado con el logo del cliente.'
+        ],
+        correct: 1,
+        fb: 'Un servicio personalizado implica conocer las preferencias y necesidades de cada cliente — sus horarios, su forma de recibir la mercancía, sus expectativas — y actuar en consecuencia. Esto genera una experiencia superior y diferenciada.'
+      },
+      {
+        q: 'Cuando un conductor detecta un problema con la mercancía durante el transporte, ¿cuál es la acción correcta?',
+        opts: [
+          'Seguir con la entrega y esperar a que el cliente lo descubra.',
+          'Arreglar el problema por su cuenta sin informar a nadie.',
+          'Comunicar de inmediato el problema a la empresa y, si corresponde, al cliente, antes de completar la entrega.',
+          'Devolver la carga al origen sin aviso previo.'
+        ],
+        correct: 2,
+        fb: 'La transparencia y la comunicación proactiva son señales de profesionalismo. Informar a tiempo permite que la empresa y el cliente tomen decisiones. Ocultar un problema empeora la situación y daña la confianza.'
+      },
+      {
+        q: '¿Qué es la "cadena de valor" en un servicio de transporte de mercancías?',
+        opts: [
+          'El recorrido físico que hace el vehículo desde el origen al destino.',
+          'El conjunto de actividades y procesos interconectados que agregan valor al servicio desde el pedido hasta la entrega.',
+          'El precio total que paga el cliente por el transporte.',
+          'El número de clientes activos que tiene la empresa.'
+        ],
+        correct: 1,
+        fb: 'La cadena de valor incluye todas las etapas: recepción del pedido, carga, transporte, entrega y posventa. Cada eslabón debe funcionar bien para ofrecer un servicio de calidad. El conductor es uno de los eslabones más visibles y críticos.'
+      },
+      {
+        q: 'Un cliente menciona que prefiere recibir una llamada de confirmación 30 minutos antes de la llegada del camión. ¿Cómo debe actuar el conductor profesional?',
+        opts: [
+          'Considerarlo opcional; solo llamar si recuerda hacerlo.',
+          'Tomar nota de la preferencia, informar a la empresa y cumplir con esa expectativa en futuras entregas.',
+          'Decirle al cliente que ese no es parte del servicio contratado.',
+          'Enviar un mensaje de texto en lugar de llamar, por comodidad propia.'
+        ],
+        correct: 1,
+        fb: 'Registrar y cumplir las preferencias del cliente demuestra que el servicio es orientado al cliente. Este tipo de detalle construye confianza y fidelización. El conductor debe actuar como representante del servicio integral de la empresa.'
+      },
+      {
+        q: '¿Cuál de los siguientes elementos NO forma parte de la calidad en el servicio de transporte?',
+        opts: [
+          'Puntualidad en la entrega.',
+          'Integridad de la mercancía.',
+          'Color del vehículo de transporte.',
+          'Documentación correcta y completa.'
+        ],
+        correct: 2,
+        fb: 'El color del vehículo no afecta la calidad del servicio. En cambio, la puntualidad, el estado de la mercancía y la documentación son indicadores directos de la calidad del servicio percibida por el cliente.'
+      }
+    ]
+  },
+
+  3: {
+    title: 'Quiz 3 · Calidad y Buenas Prácticas',
+    icon: '🏆',
+    color: '#f59e0b',
+    questions: [
+      {
+        q: '¿Qué se entiende por "calidad en el servicio de transporte"?',
+        opts: [
+          'Transportar la mayor cantidad de mercancía al menor costo posible.',
+          'Cumplir consistentemente con las expectativas del cliente en tiempo, condición y trato durante todo el proceso de entrega.',
+          'Usar vehículos de última generación con tecnología GPS.',
+          'Tener el mayor número de conductores disponibles en la empresa.'
+        ],
+        correct: 1,
+        fb: 'La calidad en el transporte es la capacidad de cumplir de forma constante con lo prometido: tiempo, condición de la mercancía y trato profesional. No depende solo del vehículo o la tecnología, sino del compromiso de todas las personas involucradas.'
+      },
+      {
+        q: 'La "mejora continua" en el servicio de transporte implica:',
+        opts: [
+          'Cambiar los procedimientos cada semana para innovar.',
+          'Analizar constantemente el desempeño, identificar áreas de mejora e implementar acciones correctivas de forma sistemática.',
+          'Contratar nuevos conductores cuando hay quejas de clientes.',
+          'Reducir los tiempos de descanso del conductor para entregar más rápido.'
+        ],
+        correct: 1,
+        fb: 'La mejora continua es un proceso estructurado de evaluación y corrección. Se basa en datos, feedback de clientes y análisis de procesos. No es un cambio espontáneo, sino una práctica sistemática orientada a la excelencia.'
+      },
+      {
+        q: '¿Cuál de los siguientes es un indicador clave de desempeño (KPI) en el transporte de mercancías?',
+        opts: [
+          'El número de horas que el conductor pasa fuera de casa.',
+          'El porcentaje de entregas realizadas a tiempo (on-time delivery rate).',
+          'La antigüedad del vehículo utilizado.',
+          'El número de rutas que conoce el conductor.'
+        ],
+        correct: 1,
+        fb: 'El porcentaje de entregas a tiempo es uno de los KPIs más importantes en logística. Mide directamente la capacidad de la empresa de cumplir sus compromisos. También se usan: tasa de incidencias, nivel de satisfacción del cliente y costo por entrega.'
+      },
+      {
+        q: 'Cuando se produce una incidencia durante el transporte (daño, pérdida, retraso), la buena práctica indica que el conductor debe:',
+        opts: [
+          'Esperar a llegar al destino para informar.',
+          'Registrar y comunicar la incidencia de inmediato a la empresa, documentarla con fotos si es posible y seguir el protocolo establecido.',
+          'Solucionar el problema por cuenta propia sin documentar nada.',
+          'Negarla si el cliente no se da cuenta.'
+        ],
+        correct: 1,
+        fb: 'La gestión correcta de incidencias requiere rapidez, documentación y comunicación. Registrar con fotos y reportar de inmediato permite a la empresa activar protocolos de compensación o solución, protegiendo tanto al cliente como al conductor.'
+      },
+      {
+        q: '¿Qué significa "proactividad" en el contexto de la atención al cliente en transporte?',
+        opts: [
+          'Actuar solo cuando el cliente reclama.',
+          'Anticiparse a los posibles problemas y necesidades del cliente antes de que estos ocurran o sean expresados.',
+          'Ejecutar exactamente lo que dice el contrato, ni más ni menos.',
+          'Tomar decisiones unilaterales sin consultar a la empresa.'
+        ],
+        correct: 1,
+        fb: 'La proactividad implica anticipar: avisar de un posible retraso antes de que ocurra, verificar las condiciones de la mercancía antes de cargar, o preguntar al cliente si hay alguna instrucción especial. Esta actitud eleva la experiencia del servicio.'
+      },
+      {
+        q: '¿Cuál es el objetivo principal de establecer protocolos de buenas prácticas en una empresa de transporte?',
+        opts: [
+          'Aumentar el control sobre los conductores para reducir errores individuales.',
+          'Garantizar que todos los miembros del equipo ofrezcan un servicio consistente y de calidad, independientemente de quién realice la entrega.',
+          'Reducir el personal necesario automatizando las decisiones.',
+          'Cumplir únicamente con las inspecciones de autoridades de transporte.'
+        ],
+        correct: 1,
+        fb: 'Los protocolos estandarizan la calidad del servicio. Si todos siguen las mismas buenas prácticas, el cliente recibe la misma experiencia sin importar qué conductor hace la entrega. Esto genera confianza y profesionalismo institucional.'
+      },
+      {
+        q: 'El concepto de "ciclo de Deming" (PDCA: Planificar, Hacer, Verificar, Actuar) aplicado al transporte sirve para:',
+        opts: [
+          'Planificar las rutas diarias de los camiones.',
+          'Implementar un sistema de mejora continua: planificar acciones, ejecutarlas, verificar resultados y corregir desviaciones.',
+          'Calcular el costo de cada entrega.',
+          'Establecer los horarios de los conductores.'
+        ],
+        correct: 1,
+        fb: 'El ciclo PDCA es una metodología de gestión de calidad aplicable a cualquier proceso. En transporte: Planificar una mejora (ej. reducir retrasos), Hacer (implementarla), Verificar (medir resultados) y Actuar (estandarizar o corregir).'
+      },
+      {
+        q: '¿Qué debe hacer un conductor profesional al finalizar cada jornada como parte de las buenas prácticas?',
+        opts: [
+          'Nada especial; su responsabilidad termina al entregar la última mercancía.',
+          'Revisar y firmar cualquier parte de incidencia, entregar documentación completa, reportar el estado del vehículo y cualquier eventualidad del día.',
+          'Lavar el camión y guardarlo.',
+          'Llamar a cada cliente para preguntar si están satisfechos.'
+        ],
+        correct: 1,
+        fb: 'El cierre de jornada es parte del servicio. Documentar incidencias, entregar documentación y reportar el estado del vehículo garantiza trazabilidad y permite a la empresa gestionar posibles reclamaciones futuras con información precisa.'
+      },
+      {
+        q: '¿Cuál es la diferencia entre un "error" y una "no conformidad" en gestión de calidad del transporte?',
+        opts: [
+          'Son sinónimos exactos.',
+          'Un error es una desviación puntual; una no conformidad es un incumplimiento sistemático de un estándar o requisito establecido.',
+          'Los errores los cometen los conductores y las no conformidades las comete la empresa.',
+          'La no conformidad siempre genera una multa.'
+        ],
+        correct: 1,
+        fb: 'En gestión de calidad, un error puede ser puntual y humano, mientras que una no conformidad implica que un proceso no cumple con los requisitos definidos de forma recurrente. Las no conformidades requieren análisis de causa raíz y acciones correctivas formales.'
+      },
+      {
+        q: 'Para medir la satisfacción del cliente en un servicio de transporte, ¿cuál de los siguientes instrumentos es más efectivo?',
+        opts: [
+          'Contar el número de entregas realizadas por mes.',
+          'Aplicar encuestas de satisfacción post-entrega, analizar reclamaciones y hacer seguimiento de KPIs de servicio.',
+          'Preguntar verbalmente al conductor si los clientes estuvieron contentos.',
+          'Revisar si los pagos de los clientes llegaron a tiempo.'
+        ],
+        correct: 1,
+        fb: 'Medir la satisfacción requiere instrumentos formales: encuestas (NPS, CSAT), análisis de reclamaciones y seguimiento de indicadores. Solo con datos precisos se pueden identificar áreas de mejora y tomar decisiones fundamentadas.'
+      }
+    ]
+  },
+
+  4: {
+    title: 'Quiz 4 · Imagen y Prestaciones',
+    icon: '🪪',
+    color: '#7c3aed',
+    questions: [
+      {
+        q: '¿Qué elemento de la imagen personal del conductor tiene mayor impacto en la primera impresión del cliente?',
+        opts: [
+          'El modelo del camión que conduce.',
+          'La presentación personal: aseo, uniforme correcto, postura y saludo.',
+          'El número de años de experiencia que tiene.',
+          'La empresa para la que trabaja.'
+        ],
+        correct: 1,
+        fb: 'La primera impresión se forma en segundos. La apariencia personal (higiene, uniforme, actitud) comunica profesionalismo antes de decir una sola palabra. Un conductor bien presentado genera confianza inmediata en el cliente.'
+      },
+      {
+        q: '¿Qué es la "imagen de marca" de una empresa de transporte y cómo contribuye a ella el conductor?',
+        opts: [
+          'Es el logotipo de la empresa; el conductor no influye en ella.',
+          'Es la percepción global que tienen los clientes y la sociedad sobre la empresa; el conductor la construye o destruye con cada interacción.',
+          'Es la publicidad que hace la empresa en medios digitales.',
+          'Es exclusivamente la flota de vehículos de la empresa.'
+        ],
+        correct: 1,
+        fb: 'La imagen de marca es la suma de todas las percepciones. El conductor, al ser el punto de contacto directo con el cliente, es uno de los principales constructores (o destructores) de esa imagen. Su comportamiento en ruta también representa a la empresa ante la sociedad.'
+      },
+      {
+        q: '¿Cuál de las siguientes conductas daña más la imagen profesional de un conductor de transporte?',
+        opts: [
+          'Llevar el uniforme con el logo de la empresa.',
+          'Conducir de forma agresiva, hacer gestos irrespetuosos o mala conducta en vía pública.',
+          'Verificar la carga antes de partir.',
+          'Pedir confirmación de recepción firmada.'
+        ],
+        correct: 1,
+        fb: 'La conducta en vía pública es visible para todos. Un conductor agresivo o irrespetuoso en la carretera perjudica la imagen de la empresa, del sector y del gremio. La conducción cortés y segura es también parte de las prestaciones profesionales.'
+      },
+      {
+        q: '¿Qué son las "prestaciones" de un conductor profesional de transporte de mercancías?',
+        opts: [
+          'Los beneficios económicos que recibe el conductor de la empresa.',
+          'El conjunto de competencias, habilidades, conocimientos y actitudes que el conductor aplica para ofrecer un servicio de calidad.',
+          'Las características técnicas del vehículo que conduce.',
+          'Los documentos que debe llevar durante el transporte.'
+        ],
+        correct: 1,
+        fb: 'Las prestaciones profesionales son las capacidades que el conductor pone al servicio del cliente: conducción segura, trato profesional, gestión de documentación, manejo de incidencias y representación de la empresa. Son el valor diferencial de un profesional frente a un simple operador.'
+      },
+      {
+        q: 'Un cliente en el punto de entrega intenta iniciar una conversación política con el conductor. ¿Cuál es la actitud más profesional?',
+        opts: [
+          'Participar activamente y expresar su opinión política sin filtros.',
+          'Escuchar con cortesía, no emitir opiniones personales sobre temas polémicos y reconducir la conversación hacia el servicio.',
+          'Ignorar completamente al cliente y apresurarse en la entrega.',
+          'Decirle al cliente que los conductores no pueden hablar durante las entregas.'
+        ],
+        correct: 1,
+        fb: 'El conductor profesional mantiene la cordialidad sin involucrarse en debates políticos o personales. Expresar opiniones polémicas puede generar conflicto, incomodar al cliente o comprometer la imagen de la empresa. La neutralidad educada es la mejor actitud.'
+      },
+      {
+        q: '¿Por qué es importante que el conductor conozca los productos o mercancía que transporta?',
+        opts: [
+          'Para poder venderlos si tiene la oportunidad.',
+          'Para manejarlos correctamente según sus características (frágil, peligroso, perecedero) y responder preguntas básicas del cliente con seguridad.',
+          'Porque la ley obliga a los conductores a ser expertos en los productos.',
+          'Para establecer el precio del transporte según el tipo de mercancía.'
+        ],
+        correct: 1,
+        fb: 'Conocer la mercancía permite al conductor tomar las precauciones necesarias en el manejo, almacenamiento y entrega. También transmite confianza al cliente cuando puede responder preguntas básicas sobre el estado o condiciones del producto durante el transporte.'
+      },
+      {
+        q: '¿Cómo debe actuar un conductor si el cliente, al recibir la mercancía, señala un daño que ya existía antes de la carga?',
+        opts: [
+          'Negar el daño y exigir al cliente que firme el albarán sin observaciones.',
+          'Aceptar toda responsabilidad para no discutir con el cliente.',
+          'Mostrar la documentación de estado previo de la mercancía, anotar las observaciones del cliente en el albarán y reportar la situación a la empresa.',
+          'Retirarse sin entregar la mercancía para evitar problemas.'
+        ],
+        correct: 2,
+        fb: 'La documentación es clave. Si el daño preexistía, el conductor debe tener el registro de entrada de la mercancía. Anotar las observaciones del cliente y reportar a la empresa protege a todas las partes y permite una resolución transparente.'
+      },
+      {
+        q: '¿Qué habilidad blanda es más importante para un conductor profesional en contacto con clientes?',
+        opts: [
+          'Conocimiento avanzado de mecánica del vehículo.',
+          'Inteligencia emocional: capacidad de gestionar sus propias emociones y responder de forma empática ante situaciones difíciles.',
+          'Dominio de idiomas extranjeros.',
+          'Conocimiento de normativa aduanera internacional.'
+        ],
+        correct: 1,
+        fb: 'La inteligencia emocional permite al conductor mantener la calma, mostrar empatía y actuar con profesionalismo incluso cuando el cliente está molesto o la situación es complicada. Es la habilidad que más diferencia a un profesional de un operador básico.'
+      }
+    ]
+  },
+
+  5: {
+    title: 'Quiz 5 · Circulación Urbana',
+    icon: '🗺️',
+    color: '#16a34a',
+    questions: [
+      {
+        q: '¿Cuál es la principal restricción de circulación para vehículos pesados en zonas urbanas en Ecuador?',
+        opts: [
+          'Solo pueden circular de noche en cualquier zona de la ciudad.',
+          'Existen franjas horarias y zonas restringidas determinadas por los municipios para proteger la movilidad y el comercio urbano.',
+          'Los vehículos pesados no pueden ingresar a ninguna ciudad bajo ninguna circunstancia.',
+          'Solo se permite la circulación de vehículos pesados en fines de semana.'
+        ],
+        correct: 1,
+        fb: 'Los municipios establecen restricciones horarias y zonales para vehículos de carga con el fin de reducir la congestión y proteger la infraestructura urbana. El conductor debe conocer y respetar estas restricciones para evitar multas y garantizar entregas eficientes.'
+      },
+      {
+        q: '¿Qué debe hacer un conductor al no encontrar una zona habilitada de carga/descarga en el punto de entrega?',
+        opts: [
+          'Estacionar en doble fila el tiempo mínimo necesario.',
+          'Buscar la zona habilitada más cercana, comunicar la situación a la empresa y al cliente, y seguir el protocolo establecido.',
+          'Cancelar la entrega y volver al origen.',
+          'Estacionar en la acera si el espacio lo permite.'
+        ],
+        correct: 1,
+        fb: 'Cuando no hay zona de carga disponible, el conductor debe comunicar la situación y buscar alternativas legales cercanas. Estacionar en doble fila o en la acera genera multas, accidentes y mala imagen. La comunicación proactiva es clave.'
+      },
+      {
+        q: '¿Qué son las "zonas de carga y descarga" en entornos urbanos?',
+        opts: [
+          'Áreas privadas exclusivas para empresas de logística.',
+          'Espacios habilitados por las autoridades municipales para que los vehículos comerciales realicen operaciones de entrega y recogida de mercancía.',
+          'Estacionamientos de pago habilitados para camiones.',
+          'Depósitos fiscales donde se almacena mercancía en tránsito.'
+        ],
+        correct: 1,
+        fb: 'Las zonas de carga y descarga son espacios regulados por el municipio para facilitar la logística urbana. Su uso correcto reduce la congestión, accidentes y multas. El conductor debe identificarlas en su planificación de ruta.'
+      },
+      {
+        q: 'Cuando un vehículo de transporte de mercancías supera el peso máximo autorizado en vía urbana, ¿qué consecuencias puede generar?',
+        opts: [
+          'Solo puede ser detenido si lo ve un agente de tránsito.',
+          'Multas económicas, daños a la infraestructura vial, riesgo de accidente y responsabilidad civil y penal para el conductor y la empresa.',
+          'Únicamente afecta al consumo de combustible del vehículo.',
+          'El conductor puede continuar si lleva la documentación de la carga en regla.'
+        ],
+        correct: 1,
+        fb: 'El sobrepeso tiene consecuencias múltiples: daña el pavimento (responsabilidad civil), aumenta el riesgo de accidentes por problemas de frenado, genera sanciones económicas y puede derivar en responsabilidad penal. El conductor debe verificar el peso antes de salir.'
+      },
+      {
+        q: '¿Qué medida debe tomar el conductor antes de ingresar a una zona urbana restringida por tonelaje?',
+        opts: [
+          'Ingresar si es urgente la entrega y pagar la multa después.',
+          'Verificar el tonelaje de su vehículo con carga, consultar las restricciones locales y, si supera el límite, obtener el permiso especial correspondiente o planificar una ruta alternativa.',
+          'Descargar parte de la mercancía en la calle para reducir el peso.',
+          'Llamar al cliente para que él gestione el permiso de ingreso.'
+        ],
+        correct: 1,
+        fb: 'La planificación previa es clave. El conductor profesional conoce las restricciones de la zona de entrega y verifica si necesita un permiso especial. Si no es posible ingresar, debe informar a la empresa y al cliente con tiempo para buscar alternativas.'
+      },
+      {
+        q: '¿Cómo afecta el incumplimiento de las restricciones de circulación urbana a la imagen de la empresa?',
+        opts: [
+          'No afecta a la empresa, solo es responsabilidad del conductor.',
+          'Genera multas que la empresa debe pagar, daña su reputación ante clientes y autoridades, y puede resultar en suspensión de licencias o contratos.',
+          'Solo afecta si el incidente sale en las noticias.',
+          'Las empresas no son responsables por las infracciones de sus conductores.'
+        ],
+        correct: 1,
+        fb: 'Las infracciones del conductor durante el servicio son atribuibles también a la empresa. Además de las multas, el incumplimiento reiterado puede derivar en sanciones administrativas, pérdida de contratos y deterioro de la reputación institucional.'
+      },
+      {
+        q: '¿Qué debe priorizar un conductor de mercancías al circular por zonas escolares o peatonales en entornos urbanos?',
+        opts: [
+          'Mantener la velocidad habitual para no retrasar la entrega.',
+          'Reducir la velocidad, extremar la precaución, respetar los pasos de cebra y anticiparse a la presencia de niños o peatones.',
+          'Activar las luces de emergencia y circular normalmente.',
+          'Esperar a que la zona esté despejada antes de avanzar.'
+        ],
+        correct: 1,
+        fb: 'En zonas escolares y peatonales, la seguridad es la prioridad absoluta. Los vehículos pesados tienen mayor distancia de frenado y ángulos muertos amplios. Reducir la velocidad, anticiparse y ceder el paso no solo es legal, sino una responsabilidad ética.'
+      },
+      {
+        q: '¿Cuál es el procedimiento correcto si un conductor recibe una multa durante una entrega por infracción de circulación urbana?',
+        opts: [
+          'Pagarlo de su propio dinero y no decirle nada a la empresa.',
+          'Ignorarla y continuar el servicio.',
+          'Reportar la situación a la empresa inmediatamente, conservar el documento de la multa y seguir el protocolo establecido para gestión de infracciones.',
+          'Impugnar la multa en el momento con el agente de tránsito.'
+        ],
+        correct: 2,
+        fb: 'La empresa debe ser informada de toda infracción para gestionarla correctamente. Ocultar una multa puede agravar las consecuencias. El protocolo de la empresa determinará quién asume el costo y cómo se gestiona el proceso legal.'
+      }
+    ]
+  },
+
+  6: {
+    title: 'Quiz 6 · Comunicación y Éxito',
+    icon: '💬',
+    color: '#dc2626',
+    questions: [
+      {
+        q: '¿Cuál es el elemento más importante de la comunicación efectiva entre el conductor y el cliente en el momento de la entrega?',
+        opts: [
+          'Hablar con un vocabulario técnico para demostrar profesionalismo.',
+          'Escucha activa: prestar atención total a lo que dice el cliente, confirmar lo entendido y responder de forma clara y respetuosa.',
+          'Hablar lo menos posible para agilizar la entrega.',
+          'Usar siempre un lenguaje formal y protocolario.'
+        ],
+        correct: 1,
+        fb: 'La escucha activa es la base de la comunicación efectiva. Implica no solo oír, sino entender y confirmar. En una entrega, escuchar al cliente evita malentendidos, detecta problemas a tiempo y transmite respeto y profesionalismo.'
+      },
+      {
+        q: '¿Cuál de las siguientes es una barrera de comunicación frecuente en el servicio de transporte?',
+        opts: [
+          'Confirmar la dirección de entrega antes de salir.',
+          'El ruido ambiental, el uso del teléfono durante la interacción o un lenguaje demasiado técnico que el cliente no comprende.',
+          'Llegar puntualmente al punto de entrega.',
+          'Entregar la documentación firmada al cliente.'
+        ],
+        correct: 1,
+        fb: 'Las barreras de comunicación impiden que el mensaje llegue correctamente. En transporte, las más comunes son: ruido ambiental, distracción por el teléfono, lenguaje inapropiado y falta de confirmación. El conductor debe minimizarlas activamente.'
+      },
+      {
+        q: '¿Qué es el lenguaje no verbal y qué importancia tiene en la atención al cliente?',
+        opts: [
+          'Es el lenguaje escrito en los documentos de entrega.',
+          'Es la comunicación a través de gestos, postura, expresión facial y tono de voz; impacta en más del 60% de cómo el cliente percibe la actitud del conductor.',
+          'Es el lenguaje de señas para clientes con discapacidad auditiva.',
+          'No tiene relevancia en el transporte de mercancías.'
+        ],
+        correct: 1,
+        fb: 'Los estudios de comunicación indican que más del 55% del impacto de un mensaje proviene del lenguaje no verbal. Una postura abierta, una mirada amable y un tono calmado transmiten confianza y respeto incluso antes de hablar.'
+      },
+      {
+        q: '¿Qué es la "asertividad" en la comunicación profesional?',
+        opts: [
+          'Imponer la propia opinión sin ceder ante el cliente.',
+          'Expresar las propias ideas, necesidades y límites de forma clara, directa y respetuosa, sin ser agresivo ni pasivo.',
+          'Estar siempre de acuerdo con el cliente para evitar conflictos.',
+          'Comunicarse solo mediante documentos escritos.'
+        ],
+        correct: 1,
+        fb: 'La asertividad es el punto medio entre la agresividad y la pasividad. Permite al conductor comunicar problemas o límites con claridad y respeto: "Entiendo su molestia, sin embargo, no me es posible modificar la ruta sin autorización de la empresa." Es una habilidad esencial en el servicio.'
+      },
+      {
+        q: '¿Cuáles son los factores clave del éxito en una empresa de transporte según la perspectiva de la calidad de servicio?',
+        opts: [
+          'Tener el mayor número de vehículos disponibles y los precios más bajos.',
+          'Puntualidad, seguridad, trato profesional, transparencia en la comunicación y mejora continua.',
+          'Publicidad efectiva en redes sociales y buena ubicación de la sede.',
+          'Contratos a largo plazo con grandes empresas multinacionales.'
+        ],
+        correct: 1,
+        fb: 'El éxito sostenible en el transporte se basa en factores cualitativos: cumplir siempre lo prometido, comunicarse con honestidad, tratar bien a los clientes y mejorar continuamente. El precio más bajo solo funciona a corto plazo si no viene acompañado de calidad.'
+      },
+      {
+        q: '¿Qué se entiende por "calidad empresarial" en el contexto del transporte profesional?',
+        opts: [
+          'Que la empresa tenga certificaciones ISO obligatoriamente.',
+          'La capacidad de la organización para cumplir sistemáticamente sus promesas de servicio, gestionar sus procesos con eficiencia y orientarse permanentemente al cliente.',
+          'Que los directivos tengan estudios universitarios en logística.',
+          'Que la empresa sea grande y reconocida a nivel nacional.'
+        ],
+        correct: 1,
+        fb: 'La calidad empresarial va más allá de las certificaciones. Es una cultura organizacional que pone al cliente en el centro de todas las decisiones, gestiona los procesos con rigor y busca mejorar permanentemente. Los conductores son parte esencial de esa cultura.'
+      },
+      {
+        q: '¿Cómo puede un conductor contribuir activamente al éxito comercial de la empresa de transporte?',
+        opts: [
+          'Reduciendo el consumo de combustible al máximo en cada ruta.',
+          'Siendo puntual, dando un trato excepcional al cliente, reportando oportunidades de mejora y representando dignamente a la empresa en cada entrega.',
+          'Evitando hablar con los clientes para no generar compromisos.',
+          'Aceptando trabajos adicionales fuera de su horario laboral.'
+        ],
+        correct: 1,
+        fb: 'El conductor es un agente comercial en campo. Su trato al cliente puede generar renovaciones de contrato, recomendaciones y fidelización. Además, su conocimiento del terreno le permite aportar información valiosa para mejorar rutas y procesos.'
+      },
+      {
+        q: '¿Cuál es el impacto de una mala comunicación interna (entre conductores, despachadores y empresa) en la calidad del servicio?',
+        opts: [
+          'Ninguno; el servicio al cliente no depende de la comunicación interna.',
+          'Genera errores en rutas, retrasos, mercancía mal gestionada y un servicio deficiente que el cliente percibe directamente.',
+          'Solo afecta la productividad del equipo de oficina.',
+          'Se compensa fácilmente con una buena presentación del conductor.'
+        ],
+        correct: 1,
+        fb: 'La comunicación interna es la columna vertebral de la operación logística. Cuando falla internamente — instrucciones confusas, cambios no comunicados, documentación incompleta — el error llega inevitablemente al cliente. Una empresa bien comunicada internamente ofrece un servicio externo consistente.'
+      }
+    ]
+  }
+};
+
+// ── STATE ──
+let currentQuiz = null;
+let currentQ = 0;
+let answered = [];
+let scores = {};
+let completedQuizzes = new Set();
+
+// ── INIT ──
+function startQuiz(id) {
+  currentQuiz = id;
+  currentQ = 0;
+  answered = new Array(QUIZZES[id].questions.length).fill(null);
+
+  const q = QUIZZES[id];
+  document.getElementById('playerTitle').textContent = q.title;
+  document.getElementById('playerIcon').textContent = q.icon;
+  document.getElementById('playerSubtitle').textContent = 'Atención al Cliente · Licencia Tipo E Regular';
+  document.getElementById('metaTotal').textContent = q.questions.length;
+
+  buildNav();
+  renderQuestion();
+  document.getElementById('resultsPanel').classList.remove('show');
+  document.getElementById('quizPlayer').style.display = 'block';
+  document.getElementById('quizPlayer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildNav() {
+  const nav = document.getElementById('quizNav');
+  const total = QUIZZES[currentQuiz].questions.length;
+  nav.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'qnav-btn' + (i === currentQ ? ' current' : '');
+    btn.textContent = i + 1;
+    btn.onclick = () => jumpTo(i);
+    nav.appendChild(btn);
+  }
+}
+
+function updateNav() {
+  const btns = document.querySelectorAll('.qnav-btn');
+  btns.forEach((btn, i) => {
+    btn.className = 'qnav-btn';
+    if (i === currentQ) btn.classList.add('current');
+    if (answered[i] !== null) {
+      const correct = answered[i] === QUIZZES[currentQuiz].questions[i].correct;
+      btn.classList.add(correct ? 'answered-correct' : 'answered-wrong');
+    }
+  });
+}
+
+function jumpTo(i) {
+  currentQ = i;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUIZZES[currentQuiz].questions[currentQ];
+  const total = QUIZZES[currentQuiz].questions.length;
+
+  document.getElementById('questionNum').textContent = `Pregunta ${currentQ + 1} de ${total}`;
+  document.getElementById('questionText').textContent = q.q;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.disabled = answered[currentQ] !== null;
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => checkAnswer(i);
+
+    if (answered[currentQ] !== null) {
+      if (i === q.correct) btn.classList.add('correct');
+      else if (i === answered[currentQ] && answered[currentQ] !== q.correct) btn.classList.add('wrong');
+    }
+    container.appendChild(btn);
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedbackBox');
+  if (answered[currentQ] !== null) {
+    const isCorrect = answered[currentQ] === q.correct;
+    fb.className = 'feedback show ' + (isCorrect ? 'fb-correct' : 'fb-wrong');
+    fb.innerHTML = (isCorrect ? '✅ ' : '❌ ') + q.fb;
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  } else {
+    fb.className = 'feedback';
+    fb.textContent = '';
+    document.getElementById('btnNext').style.display = 'none';
+  }
+
+  updateNav();
+}
+
+function checkAnswer(idx) {
+  if (answered[currentQ] !== null) return;
+  answered[currentQ] = idx;
+  renderQuestion();
+
+  // Check if all answered
+  if (answered.every(a => a !== null)) {
+    setTimeout(showResults, 800);
+  }
+}
+
+function nextQuestion() {
+  const total = QUIZZES[currentQuiz].questions.length;
+  // Find next unanswered
+  let next = -1;
+  for (let i = currentQ + 1; i < total; i++) {
+    if (answered[i] === null) { next = i; break; }
+  }
+  if (next === -1) {
+    for (let i = 0; i < currentQ; i++) {
+      if (answered[i] === null) { next = i; break; }
+    }
+  }
+  if (next !== -1) {
+    currentQ = next;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function resetCurrentQuestion() {
+  answered[currentQ] = null;
+  renderQuestion();
+}
+
+function showResults() {
+  const q = QUIZZES[currentQuiz];
+  const correct = answered.filter((a, i) => a === q.questions[i].correct).length;
+  const total = q.questions.length;
+  const pct = Math.round((correct / total) * 100);
+
+  scores[currentQuiz] = pct;
+  completedQuizzes.add(currentQuiz);
+  updateGlobalProgress();
+  markCardDone(currentQuiz);
+
+  const panel = document.getElementById('resultsPanel');
+  const scoreEl = document.getElementById('resultScore');
+  scoreEl.textContent = `${correct}/${total}`;
+  scoreEl.style.color = pct >= 70 ? '#16a34a' : pct >= 50 ? '#f59e0b' : '#dc2626';
+
+  document.getElementById('resultLabel').textContent = pct >= 70
+    ? '🎉 ¡Excelente resultado!'
+    : pct >= 50
+    ? '👍 Buen intento — puedes mejorar'
+    : '📚 Necesitas repasar este tema';
+
+  document.getElementById('resultMedals').innerHTML = `
+    <div class="medal-box"><strong style="color:#16a34a;">${correct}</strong><span>Correctas</span></div>
+    <div class="medal-box"><strong style="color:#dc2626;">${total - correct}</strong><span>Incorrectas</span></div>
+    <div class="medal-box"><strong style="color:#2563eb;">${pct}%</strong><span>Puntuación</span></div>
+  `;
+
+  document.getElementById('resultMsg').textContent = pct >= 70
+    ? '¡Muy bien! Demuestras un buen dominio de este módulo. Continúa con el siguiente quiz.'
+    : pct >= 50
+    ? 'Has superado la mitad. Revisa las preguntas incorrectas y vuelve a intentarlo.'
+    : 'Te recomendamos repasar el material de este módulo antes de continuar con el examen final.';
+
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function retryQuiz() {
+  startQuiz(currentQuiz);
+}
+
+function closeQuiz() {
+  document.getElementById('quizPlayer').style.display = 'none';
+  document.getElementById('quizGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  currentQuiz = null;
+}
+
+function markCardDone(id) {
+  const card = document.getElementById('qcard-' + id);
+  if (card) card.classList.add('done');
+}
+
+function updateGlobalProgress() {
+  const done = completedQuizzes.size;
+  const total = 6;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = `${done} de ${total} quizzes completados`;
+}
+
+function showNotif(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3200);
+}
+</script>
+
+</body>
+</html>
